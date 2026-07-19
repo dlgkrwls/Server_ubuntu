@@ -1,103 +1,85 @@
-# Ubuntu 서버에서 Docker를 사용한 비디오 분석 실행 매뉴얼
+<div align="center">
 
-이 문서는 **Ubuntu 서버에서 Docker를 설치하고, Docker 이미지를 다운로드하여 실행하는 방법**을 안내합니다.  
-Docker를 사용하여 비디오를 분석하고, 분석 결과(JSON 파일)를 Ubuntu(호스트) 서버에 저장하는 방법을 설명합니다.
+# 이학진 | Hakjin Lee
+
+### Computer Vision · Deep Learning · Model Deployment
+
+[![GitHub](https://img.shields.io/badge/GitHub-dlgkrwls-181717?style=flat-square&logo=github)](https://github.com/dlgkrwls)
+[![Email](https://img.shields.io/badge/Email-Contact-EA4335?style=flat-square&logo=gmail&logoColor=white)](mailto:202531048@sangmyung.kr)
+
+</div>
 
 ---
 
-## **1. Ubuntu 서버에서 Docker 설치**
-Ubuntu 서버에서 Docker가 설치되어 있지 않다면, 다음 명령어를 실행하여 설치합니다.
+## About Me
 
-```bash
-wget -qO- https://get.docker.com/ | sh
-```
-설치가 완료되면 Docker 버전을 확인하여 정삭적으로 설치되었는지 확인
+상명대학교 대학원에서 컴퓨터비전과 딥러닝을 연구하고 있습니다.
 
-```bash
-docker --version
-```
-## 출력예시
-```bash
-Docker version 27.2.0, build 3ab4256
-```
+PyTorch 기반 모델 구현뿐만 아니라 데이터 전처리, 학습 및 평가,
+정량 분석, Docker 기반 배포까지 전체 파이프라인을 경험했습니다.
 
-## **2  Docekr Hub 에서 이미지 다운로드**
-Docker Hub에 업로드된 leehakjin/sym1:lastest 이미지를 다운로드하려면 다음 명령어를 실행합니다.
-```bash
-docker pull leehakjin/sym1:latest
-```
-이미지가 정상적으로 다운로드되었는지 확인하려면
-## 출력예시
-```bash
-REPOSITORY      TAG       IMAGE ID       CREATED      SIZE
-leehakjin/sym1   latest    5f7f6e9cd07a   3 days ago   8.04GB
-```
+현재 다음 분야의 Computer Vision / Machine Learning Engineer 직무를 준비하고 있습니다.
 
+- Computer Vision
+- Robust and Generalizable AI
+- Image and Video Analysis
+- Biometrics and Human-Centered AI
+- Model Optimization and Deployment
 
-## **3. 비디오 분석 실행**
-# 컨테이너 실행(비디오분석)
-호스트(Ubuntu 서버)에서 분석할 비디오가 위치한 경로를 컨테이너 내부로 마운트하여 실행합니다.
-- 호스트(Ubuntu) 비디오 파일 경로: ex) /home/(유저명)/output/
-- 컨테이너 내부에서 사용할 경로 :/app/sym/data/output/
-```bash
-docker run --rm -it \
-  -v /home/(유저명)/data:/app/sym/data/output \
-  leehakjin/sym:lastest --vid_path "[data에 있는 동영상이름.mp4]"
-```
-동영상 이름의 json은 서버의 비디오파일경로 data에 나오게됩니다.
+---
 
+## Tech Stack
 
+### AI / Computer Vision
 
+![Python](https://img.shields.io/badge/Python-3776AB?style=flat-square&logo=python&logoColor=white)
+![PyTorch](https://img.shields.io/badge/PyTorch-EE4C2C?style=flat-square&logo=pytorch&logoColor=white)
+![OpenCV](https://img.shields.io/badge/OpenCV-5C3EE8?style=flat-square&logo=opencv&logoColor=white)
+![scikit-learn](https://img.shields.io/badge/scikit--learn-F7931E?style=flat-square&logo=scikitlearn&logoColor=white)
 
-## JSON 데이터 구조 설명
+### Data / Experiment
 
-`mk_json_3D_json.py`를 실행하면 **각 프레임별 3D 관절 좌표 데이터**가 JSON 형식으로 저장됩니다.  
-이 JSON 파일에는 **사람의 주요 관절에 대한 3D 좌표 정보**가 포함되어 있습니다.
+![NumPy](https://img.shields.io/badge/NumPy-013243?style=flat-square&logo=numpy&logoColor=white)
+![Pandas](https://img.shields.io/badge/Pandas-150458?style=flat-square&logo=pandas&logoColor=white)
+![SciPy](https://img.shields.io/badge/SciPy-8CAAE6?style=flat-square&logo=scipy&logoColor=white)
+![Matplotlib](https://img.shields.io/badge/Matplotlib-11557C?style=flat-square)
 
-### **1. JSON 데이터 구조**
-JSON 파일의 각 프레임(`frame`)에는 `joints` 리스트가 포함되며,  
-각 리스트 요소는 **각 관절의 (x, y, z) 좌표**를 나타냅니다.
-각 관절 좌표는 0번째인덱스(엉덩이)를 기준으로 상대좌표값을 의미하며 -1 ~ 1의 범위의 값를 가집니다
+### Deployment / Development
 
-```json
-{
-    "frame": 0,
-    "joints": [
-        {"x": 0.0, "y": 0.0, "z": 0.0},
-        {"x": -0.0559, "y": -0.0037, "z": -0.0855},
-        {"x": -0.0352, "y": 0.4264, "z": 0.0313},
-        {"x": -0.0267, "y": 0.8365, "z": 0.1258},
-        {"x": 0.0559, "y": 0.0037, "z": 0.0855},
-        {"x": 0.0570, "y": 0.4514, "z": 0.1626},
-        {"x": 0.0716, "y": 0.8465, "z": 0.2627},
-        {"x": -0.0240, "y": -0.2691, "z": -0.0309},
-        {"x": -0.0141, "y": -0.5141, "z": -0.0876},
-        {"x": -0.0337, "y": -0.7309, "z": -0.1585},
-        {"x": 0.0773, "y": -0.4999, "z": 0.0011},
-        {"x": 0.0759, "y": -0.2333, "z": 0.1012},
-        {"x": 0.1102, "y": 0.0343, "z": 0.1061},
-        {"x": -0.1125, "y": -0.4805, "z": -0.1522},
-        {"x": -0.1208, "y": -0.2023, "z": -0.1498},
-        {"x": -0.1293, "y": 0.0565, "z": -0.1500}
-    ]
-}
-```
+![Docker](https://img.shields.io/badge/Docker-2496ED?style=flat-square&logo=docker&logoColor=white)
+![Linux](https://img.shields.io/badge/Linux-FCC624?style=flat-square&logo=linux&logoColor=black)
+![Git](https://img.shields.io/badge/Git-F05032?style=flat-square&logo=git&logoColor=white)
+![GitHub](https://img.shields.io/badge/GitHub-181717?style=flat-square&logo=github&logoColor=white)
+![VS Code](https://img.shields.io/badge/VS_Code-007ACC?style=flat-square&logo=visualstudiocode&logoColor=white)
+![Jupyter](https://img.shields.io/badge/Jupyter-F37626?style=flat-square&logo=jupyter&logoColor=white)
 
-| 인덱스 | 신체 부위 |
-|--------|-----------|
-| [0]  | 엉덩이 중심 |
-| [1]  | 오른쪽 엉덩이 |
-| [2]  | 오른쪽 무릎 |
-| [3]  | 오른쪽 발 |
-| [4]  | 왼쪽 엉덩이 |
-| [5]  | 왼쪽 무릎 |
-| [6]  | 왼쪽 발 |
-| [7]  | 엉덩이 중심과 어깨 중심의 중앙 |
-| [8]  | 어깨 중심 |
-| [9]  | 눈 중심 |
-| [10] | 왼쪽 어깨 |
-| [11] | 왼쪽 엘보우 |
-| [12] | 왼쪽 손목 |
-| [13] | 오른쪽 어깨 |
-| [14] | 오른쪽 엘보우 |
-| [15] | 오른쪽 손목 |
+- Classification, Regression, Segmentation, Metric Learning
+- Image, Video, 3D Pose and Time-Series Data Processing
+- Custom Dataset and DataLoader Implementation
+- Cross-Dataset Evaluation and Ablation Study
+- Docker Image Build, Docker Hub Distribution and Ubuntu Deployment
+- Research Experiment Design and Academic Writing
+
+---
+
+## Selected Projects
+
+### 1. Docker-Based 3D Human Pose Video Analysis
+
+> 비디오를 입력받아 프레임별 3D 관절 좌표를 추출하고 JSON으로 저장하는 분석 파이프라인
+
+- 비디오 기반 3D human pose estimation 추론 파이프라인 구성
+- 프레임별 16개 주요 관절의 3D 상대좌표 추출
+- 입력 비디오와 분석 결과를 JSON 형식으로 연결
+- 모델과 실행 환경을 Docker image로 패키징
+- Docker Hub를 통한 이미지 배포
+- Ubuntu 서버의 호스트 디렉터리와 컨테이너 간 volume mount 구성
+- 컨테이너 종료 후에도 결과가 서버에 유지되도록 저장 구조 설계
+
+```text
+Input Video
+    → Frame Processing
+    → 3D Joint Estimation
+    → Coordinate Normalization
+    → JSON Generation
+    → Host Server Storage
